@@ -53,12 +53,23 @@ jobs:
           JAR_PATH=$(find target -name "*.jar" | head -n 1)
           echo "jar_path=$JAR_PATH" >> $GITHUB_OUTPUT
 
+      - name: Get sbt version
+        id: get_version
+        run: |
+          VERSION=$(sbt 'show version' | grep '\[info\]' | tail -1 | awk '{print $2}')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Rename JAR with version
+        run: |
+          mv "${{ steps.findjar.outputs.jar_path }}" "target/simple-forge-${{ steps.get_version.outputs.version }}.jar"
+          echo "renamed_jar=target/simple-forge-${{ steps.get_version.outputs.version }}.jar" >> $GITHUB_ENV
+
       - name: Upload to Azure Blob Storage
         uses: azure/CLI@v1
         with:
           inlineScript: |
             az storage blob upload \
               --container-name $CONTAINER_NAME \
-              --file "${{ steps.findjar.outputs.jar_path }}" \
-              --name "bronze-${GITHUB_SHA::7}.jar" \
-              --connection-string "$AZURE_STORAGE_CONNECTION"
+              --file "$renamed_jar" \
+              --name "simple-forge-${{ steps.get_version.outputs.version }}.jar" \
+              --connection-string "$AZURE_STORAGE_CONNECTION_STRING"
