@@ -5,21 +5,62 @@ on:
     branches: [main]
 
 jobs:
-  build-and-deploy:
+  build-test-upload:
+    name: Build, Test, and Upload JAR
     runs-on: ubuntu-latest
+
+    env:
+      AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+      CONTAINER_NAME: projectfile
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up JDK
+      - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          distribution: 'temurin'
+          java-version: '17'
 
-      - name: Build JAR
+      - name: Cache SBT dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.ivy2/cache
+            ~/.sbt
+          key: sbt-${{ runner.os }}-${{ hashFiles('**/build.sbt') }}
+          restore-keys: |
+            sbt-${{ runner.os }}-
+
+      - name: Install SBT
+        run: |
+          echo "Installing SBT..."
+          curl -L -o sbt.deb https://repo.scala-sbt.org/scalasbt/debian/sbt-1.9.7.deb
+          sudo dpkg -i sbt.deb
+          sudo apt-get update
+          sudo apt-get install -y sbt
+
+      - name: Run tests
+        working-directory: batch/bronze
+        run: sbt test
+
+      - name: Package JAR
+        working-directory: batch/bronze
         run: sbt assembly
 
-      - name: Upload to Databricks
+      - name: Find JAR file
+        id: findjar
         run: |
-          databricks configure --token <<< "${{ secrets.DATABRICKS_TOKEN }}"
-          databricks fs cp target/scala-2.12/data-project.jar dbfs:/FileStore/jars/data-project.jar --overwrite
+          JAR_PATH=$(find batch/bronze/target -name "*.jar" | head -n 1)
+          echo "jar_path=$JAR_PATH" >> $GITHUB_OUTPUT
+
+      - name: Upload to Azure Blob Storage
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az storage blob upload \
+              --container-name $CONTAINER_NAME \
+              --file "${{ steps.findjar.outputs.jar_path }}" \
+              --name "bronze-${GITHUB_SHA::7}.jar" \
+              --connection-string "$AZURE_STORAGE_CONNECTION"
