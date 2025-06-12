@@ -2,6 +2,7 @@ import sbt.Keys.testFrameworks
 
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / scalaVersion := "2.12.15"
+ThisBuild / version := sys.props.getOrElse("version.override", "0.1.0-SNAPSHOT")
 testFrameworks += new TestFramework("org.scalatest.tools.Framework")
 lazy val root = (project in file("."))
   .settings(

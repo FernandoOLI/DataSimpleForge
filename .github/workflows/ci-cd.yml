@@ -41,24 +41,24 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y sbt
 
-      - name: Run tests
-        run: sbt test
-
-      - name: Package JAR
-        run: sbt assembly
-
-      - name: Find JAR file
-        id: findjar
-        run: |
-          JAR_PATH=$(find target -name "*.jar" | head -n 1)
-          echo "jar_path=$JAR_PATH" >> $GITHUB_OUTPUT
-
-      - name: Get sbt version
+      - name: Get clean version (remove -SNAPSHOT)
         id: get_version
         run: |
           RAW_VERSION=$(sbt 'show version' | grep '\[info\]' | tail -1 | awk '{print $2}')
           CLEAN_VERSION=$(echo "$RAW_VERSION" | sed 's/-SNAPSHOT//')
           echo "version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Run tests
+        run: sbt test
+
+      - name: Package JAR with overridden version
+        run: sbt -Dversion.override=${{ steps.get_version.outputs.version }} clean assembly
+
+      - name: Find built JAR
+        id: findjar
+        run: |
+          JAR_PATH=$(find target -name "*.jar" | head -n 1)
+          echo "jar_path=$JAR_PATH" >> $GITHUB_OUTPUT
 
       - name: Rename JAR with version
         run: |
