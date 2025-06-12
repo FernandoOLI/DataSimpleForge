@@ -56,8 +56,9 @@ jobs:
       - name: Get sbt version
         id: get_version
         run: |
-          VERSION=$(sbt 'show version' | grep '\[info\]' | tail -1 | awk '{print $2}')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          RAW_VERSION=$(sbt 'show version' | grep '\[info\]' | tail -1 | awk '{print $2}')
+          CLEAN_VERSION=$(echo "$RAW_VERSION" | sed 's/-SNAPSHOT//')
+          echo "version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
 
       - name: Rename JAR with version
         run: |
