@@ -62,6 +62,12 @@ jobs:
           echo "JAR encontrado: $JAR_PATH"
           echo "jar_path=$JAR_PATH" >> $GITHUB_OUTPUT
 
+      - name: Rename JAR to simple-forge.jar
+        run: |
+          JAR_PATH=$(find target -name "*.jar" | head -n 1)
+          echo "JAR original: $JAR_PATH"
+          cp "$JAR_PATH" simple-forge.jar
+
       - name: Upload to Azure Blob Storage
         uses: azure/CLI@v1
         with:
@@ -69,6 +75,7 @@ jobs:
             echo "Enviando: simple-forge.jar"
             az storage blob upload \
               --container-name $CONTAINER_NAME \
-              --file simple-forge.jar" \
+              --file "simple-forge.jar" \
               --name "simple-forge.jar" \
               --connection-string "$AZURE_STORAGE_CONNECTION_STRING"
+
