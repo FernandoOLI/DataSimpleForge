@@ -46,7 +46,11 @@ jobs:
         run: |
           RAW_VERSION=$(sbt 'show version' | grep '\[info\]' | tail -1 | awk '{print $2}')
           CLEAN_VERSION=$(echo "$RAW_VERSION" | sed 's/-SNAPSHOT//')
+          echo "Versão extraída: $CLEAN_VERSION"
           echo "version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Show resolved version
+        run: echo "Resolved version: ${{ steps.get_version.outputs.version }}"
 
       - name: Run tests
         run: sbt test
@@ -58,17 +62,21 @@ jobs:
         id: findjar
         run: |
           JAR_PATH=$(find target -name "*.jar" | head -n 1)
+          echo "JAR encontrado: $JAR_PATH"
           echo "jar_path=$JAR_PATH" >> $GITHUB_OUTPUT
 
       - name: Rename JAR with version
         run: |
-          mv "${{ steps.findjar.outputs.jar_path }}" "target/simple-forge-${{ steps.get_version.outputs.version }}.jar"
-          echo "renamed_jar=target/simple-forge-${{ steps.get_version.outputs.version }}.jar" >> $GITHUB_ENV
+          JAR_NAME="simple-forge-${{ steps.get_version.outputs.version }}.jar"
+          mv "${{ steps.findjar.outputs.jar_path }}" "target/$JAR_NAME"
+          echo "renamed_jar=target/$JAR_NAME" >> $GITHUB_ENV
+          echo "JAR renomeado para: $JAR_NAME"
 
       - name: Upload to Azure Blob Storage
         uses: azure/CLI@v1
         with:
           inlineScript: |
+            echo "Enviando: $renamed_jar"
             az storage blob upload \
               --container-name $CONTAINER_NAME \
               --file "$renamed_jar" \
