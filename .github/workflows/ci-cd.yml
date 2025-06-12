@@ -77,5 +77,6 @@ jobs:
               --container-name $CONTAINER_NAME \
               --file "simple-forge.jar" \
               --name "simple-forge.jar" \
+              --overwrite \
               --connection-string "$AZURE_STORAGE_CONNECTION_STRING"
 
