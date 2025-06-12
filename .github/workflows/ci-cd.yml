@@ -42,17 +42,15 @@ jobs:
           sudo apt-get install -y sbt
 
       - name: Run tests
-        working-directory: batch/bronze
         run: sbt test
 
       - name: Package JAR
-        working-directory: batch/bronze
         run: sbt assembly
 
       - name: Find JAR file
         id: findjar
         run: |
-          JAR_PATH=$(find batch/bronze/target -name "*.jar" | head -n 1)
+          JAR_PATH=$(find target -name "*.jar" | head -n 1)
           echo "jar_path=$JAR_PATH" >> $GITHUB_OUTPUT
 
       - name: Upload to Azure Blob Storage
