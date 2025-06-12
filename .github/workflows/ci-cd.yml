@@ -66,8 +66,9 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            echo "Enviando: $renamed_jar"
+            echo "Enviando: simple-forge.jar"
             az storage blob upload \
               --container-name $CONTAINER_NAME \
+              --file simple-forge.jar" \
               --name "simple-forge.jar" \
               --connection-string "$AZURE_STORAGE_CONNECTION_STRING"
