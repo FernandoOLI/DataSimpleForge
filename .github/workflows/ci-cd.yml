@@ -49,9 +49,6 @@ jobs:
           echo "Versão extraída: $CLEAN_VERSION"
           echo "version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Show resolved version
-        run: echo "Resolved version: ${{ steps.get_version.outputs.version }}"
-
       - name: Run tests
         run: sbt test
 
