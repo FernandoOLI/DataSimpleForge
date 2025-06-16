@@ -24,7 +24,6 @@ jobs:
 
       - name: Configurar Databricks CLI Profile
         run: |
-          mkdir -p ~/.databrickscfg
           echo "[prod]" > ~/.databrickscfg
           echo "host = ${{ secrets.DATABRICKS_HOST }}" >> ~/.databrickscfg
           echo "token = ${{ secrets.DATABRICKS_TOKEN }}" >> ~/.databrickscfg
