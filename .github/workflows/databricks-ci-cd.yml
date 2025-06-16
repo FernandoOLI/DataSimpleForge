@@ -1,0 +1,35 @@
+name: CI/CD Databricks Asset Bundle
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-test-upload:
+    name: Databricks Asset Bundle
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Databricks CLI
+        run: pip install databricks-cli
+
+      - name: Configure Databricks CLI
+        run: |
+          echo "[DEFAULT]" > ~/.databrickscfg
+          echo "host = ${{ secrets.DATABRICKS_HOST }}" >> ~/.databrickscfg
+          echo "token = ${{ secrets.DATABRICKS_TOKEN }}" >> ~/.databrickscfg
+
+      - name: Execute Databricks validate
+        run: |
+          databricks bundle validate --target prod --profile prod
+
+      - name: Execute Databricks deploy
+        run: |
+          databricks bundle deploy --target prod --profile prod
+
+      - name: Clean previous .databrickscfg directory if exists
+        run: |
+          if [ -d ~/.databrickscfg ]; then
+            rm -rf ~/.databrickscfg
+          fi
+
