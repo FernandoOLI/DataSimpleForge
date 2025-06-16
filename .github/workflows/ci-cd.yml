@@ -79,7 +79,7 @@ jobs:
       - name: Upload JAR to DBFS
         run: |
           echo "Uploading JAR to DBFS..."
-          databricks fs cp target/scala-2.12/simple-forge.jar dbfs:/FileStore/jars/simple-forge.jar --overwrite
+          databricks fs cp simple-forge.jar dbfs:/FileStore/jars/simple-forge.jar --overwrite
 
       - name: Clean previous .databrickscfg directory if exists
         run: |
