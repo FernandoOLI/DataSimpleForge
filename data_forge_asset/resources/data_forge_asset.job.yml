@@ -1,11 +1,12 @@
-# The main job for data_forge_asset.
+# The main job for data_simple_forge_asset.
 resources:
   jobs:
-    data_forge_asset_job:
-      name: data_forge_asset_job
+    data_simple_forge_asset_job:
+      name: data_simple_forge_asset_job
 
       trigger:
         # Run this job every day, exactly one day from the last run; see https://docs.databricks.com/api/workspace/jobs/create#trigger
+        pause_status: PAUSED
         periodic:
           interval: 1
           unit: DAYS
@@ -13,26 +14,18 @@ resources:
       email_notifications:
         on_failure:
           - oliveira-fernando1@hotmail.com
-
-      tasks:
-        - task_key: notebook_task
-          job_cluster_key: job_cluster
-          notebook_task:
-            notebook_path: ../src/notebook.ipynb
-        
-        - task_key: refresh_pipeline
-          depends_on:
-            - task_key: notebook_task
-          pipeline_task:
-            pipeline_id: ${resources.pipelines.data_forge_asset_pipeline.id}
-        
-
       job_clusters:
         - job_cluster_key: job_cluster
           new_cluster:
             spark_version: 15.4.x-scala2.12
-            node_type_id: Standard_D3_v2
+            node_type_id: Standard_DS3_v2
             data_security_mode: SINGLE_USER
-            autoscale:
-                min_workers: 1
-                max_workers: 4
+            num_workers: 1
+
+      tasks:
+        - task_key: simple_jar
+          job_cluster_key: job_cluster
+          spark_jar_task:
+            main_class_name: src.main.scala.Main
+          libraries:
+              - jar: dbfs:/FileStore/jars/simple-forge.jar

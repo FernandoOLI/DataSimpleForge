@@ -16,14 +16,10 @@ targets:
     mode: development
     default: true
     workspace:
-      host: https://adb-339423178875402.2.azuredatabricks.net
+      host: https://adb-3166031301889126.6.azuredatabricks.net
 
   prod:
     mode: production
     workspace:
-      host: https://adb-339423178875402.2.azuredatabricks.net
-      # We explicitly deploy to /Workspace/Users/oliveira-fernando1@hotmail.com to make sure we only have a single copy.
-      root_path: /Workspace/Users/oliveira-fernando1@hotmail.com/.bundle/${bundle.name}/${bundle.target}
-    permissions:
-      - user_name: oliveira-fernando1@hotmail.com
-        level: CAN_MANAGE
+      host: https://adb-3166031301889126.6.azuredatabricks.net
+      root_path: /Workspace/Users/oliveira-fernando1@hotmail.com/data_forge_asset/prod
