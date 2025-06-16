@@ -69,7 +69,7 @@ jobs:
           cp "$JAR_PATH" simple-forge.jar
 
       - name: Install Databricks CLI
-        run: pip install databricks-cli
+        run: pip install databricks-cli --upgrade
 
       - name: Configure Databricks CLI
         run: |
@@ -77,20 +77,17 @@ jobs:
           echo "host = ${{ secrets.DATABRICKS_HOST }}" >> ~/.databrickscfg
           echo "token = ${{ secrets.DATABRICKS_TOKEN }}" >> ~/.databrickscfg
 
-      - name: Upload JAR to Databricks Workspace
+      - name: Upload JAR to Databricks Workspace Files
         run: |
-          pip install databricks-cli==0.17.7
-          mkdir -p ~/.databricks
-          echo "[DEFAULT]" > ~/.databricks/config
-          echo "host = ${{ secrets.DATABRICKS_HOST }}" >> ~/.databricks/config
-          echo "token = ${{ secrets.DATABRICKS_TOKEN }}" >> ~/.databricks/config
-          
-          databricks workspace import \
-            --overwrite \
-            --language SCALA \
-            ./target/simple-forge.jar \
-            /Users/oliveira-fernando1@hotmail.com/simple-forge.jar
+          databricks fs cp ./target/scala-2.12/simple-forge.jar /Workspace/Users/oliveira-fernando1@hotmail.com/simple-forge.jar --overwrite
 
+      - name: Validate Databricks Bundle
+        run: |
+          databricks bundle validate --target prod --profile prod
+
+      - name: Deploy Databricks Bundle
+        run: |
+          databricks bundle deploy --target prod --profile prod
 
       - name: Clean previous .databrickscfg directory if exists
         run: |
