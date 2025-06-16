@@ -68,15 +68,18 @@ jobs:
           echo "JAR original: $JAR_PATH"
           cp "$JAR_PATH" simple-forge.jar
 
-      - name: Upload to Azure Blob Storage
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            echo "Enviando: simple-forge.jar"
-            az storage blob upload \
-              --container-name $CONTAINER_NAME \
-              --file "simple-forge.jar" \
-              --name "simple-forge.jar" \
-              --overwrite \
-              --connection-string "$AZURE_STORAGE_CONNECTION_STRING"
+      - name: Install Databricks CLI
+        run: pip install databricks-cli
+
+      - name: Configure Databricks CLI
+        run: |
+          mkdir -p ~/.databrickscfg
+          echo "[DEFAULT]" > ~/.databrickscfg
+          echo "host = https://$DATABRICKS_TOKEN" >> ~/.databrickscfg
+          echo "token = ${{ secrets.$DATABRICKS_TOKEN }}" >> ~/.databrickscf
+
+      - name: Upload JAR to DBFS
+        run: |
+          echo "Uploading JAR to DBFS..."
+          databricks fs cp target/scala-2.12/simple-forge.jar dbfs:/FileStore/jars/simple-forge.jar --overwrite
 
