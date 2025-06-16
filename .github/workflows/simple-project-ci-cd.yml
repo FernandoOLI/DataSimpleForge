@@ -76,10 +76,21 @@ jobs:
           echo "[DEFAULT]" > ~/.databrickscfg
           echo "host = ${{ secrets.DATABRICKS_HOST }}" >> ~/.databrickscfg
           echo "token = ${{ secrets.DATABRICKS_TOKEN }}" >> ~/.databrickscfg
-      - name: Upload JAR to DBFS
+
+      - name: Upload JAR to Databricks Workspace
         run: |
-          echo "Uploading JAR to DBFS..."
-          databricks fs cp simple-forge.jar dbfs:/FileStore/jars/simple-forge.jar --overwrite
+          pip install databricks-cli==0.17.7
+          mkdir -p ~/.databricks
+          echo "[DEFAULT]" > ~/.databricks/config
+          echo "host = ${{ secrets.DATABRICKS_HOST }}" >> ~/.databricks/config
+          echo "token = ${{ secrets.DATABRICKS_TOKEN }}" >> ~/.databricks/config
+          
+          databricks workspace import \
+            --overwrite \
+            --language SCALA \
+            ./target/simple-forge.jar \
+            /Users/oliveira-fernando1@hotmail.com/simple-forge.jar
+
 
       - name: Clean previous .databrickscfg directory if exists
         run: |
