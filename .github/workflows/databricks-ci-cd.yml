@@ -25,6 +25,11 @@ jobs:
       - name: Add local bin to PATH
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
+      - name: Check databricks CLI version
+        run: |
+          which databricks
+          databricks --version
+
       - name: Configurar Databricks CLI Profile
         run: |
           echo "[prod]" > ~/.databrickscfg
