@@ -2,6 +2,9 @@ name: CI/CD Databricks Asset Bundle
 
 on:
   push:
+    paths:
+      - 'data_forge_asset/**'
+      - '.github/workflows/databricks-ci-cd.yml'
     branches: [main]
 
 jobs:
