@@ -24,7 +24,11 @@ jobs:
 
       - name: Add local bin to PATH
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-
+      - name: Debug pip bin dir
+        run: |
+          pip show databricks
+          ls -l $HOME/.local/bin
+          echo $PATH
       - name: Check databricks CLI version
         run: |
           which databricks
