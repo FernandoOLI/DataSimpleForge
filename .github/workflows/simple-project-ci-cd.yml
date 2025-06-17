@@ -82,15 +82,7 @@ jobs:
 
       - name: Upload JAR to Databricks Workspace Files
         run: |
-          databricks fs cp ./target/scala-2.12/simple-forge.jar /Workspace/Users/oliveira-fernando1@hotmail.com/simple-forge.jar --overwrite
-
-      - name: Validate Databricks Bundle
-        run: |
-          databricks bundle validate --target prod --profile prod
-
-      - name: Deploy Databricks Bundle
-        run: |
-          databricks bundle deploy --target prod --profile prod
+          databricks fs cp ./target/scala-2.12/simple-forge.jar dbfs:/Workspace/Users/oliveira-fernando1@hotmail.com/simple-forge.jar --overwrite
 
       - name: Clean previous .databrickscfg directory if exists
         run: |
