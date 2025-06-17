@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      AWS_REGION: us-east-1
-      S3_BUCKET: your-s3-bucket-name
-      S3_KEY_PREFIX: databricks-jars/
+      AWS_REGION: us-east-2
+      S3_BUCKET: personal-project-fernando-oliveira-pereira
+      S3_KEY_PREFIX: jars/
 
     steps:
       - name: Checkout repository
@@ -79,4 +79,4 @@ jobs:
 
       - name: Upload JAR to S3
         run: |
-          aws s3 cp simple-forge.jar s3://personal-project-fernando-oliveira-pereira/jars/simple-forge.jar --acl bucket-owner-full-control
+          aws s3 cp simple-forge.jar s3://${{ env.S3_BUCKET }}/${{ env.S3_KEY_PREFIX }}simple-forge.jar --acl bucket-owner-full-control
