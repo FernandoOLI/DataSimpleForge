@@ -16,10 +16,10 @@ targets:
     mode: development
     default: true
     workspace:
-      host: https://adb-3166031301889126.6.azuredatabricks.net
+      host: https://dbc-3eaa70a5-75c6.cloud.databricks.com
 
   prod:
     mode: production
     workspace:
-      host: https://adb-3166031301889126.6.azuredatabricks.net
-      root_path: /Workspace/Users/oliveira-fernando1@hotmail.com/data_forge_asset/prod
+      host: https://dbc-3eaa70a5-75c6.cloud.databricks.com
+      root_path: /Workspace/Shared/bundles/data_forge_asset/prod/state
