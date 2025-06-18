@@ -9,12 +9,13 @@ on:
 
 jobs:
   build-test-upload:
-    name: Build, Test, and Upload JAR
+    name: Build, Test, and Upload JAR to S3
     runs-on: ubuntu-latest
 
     env:
-      AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-      CONTAINER_NAME: projectfile
+      AWS_REGION: us-east-2
+      S3_BUCKET: personal-project-fernando-oliveira-pereira
+      S3_KEY_PREFIX: jars/
 
     steps:
       - name: Checkout repository
@@ -67,26 +68,15 @@ jobs:
 
       - name: Rename JAR to simple-forge.jar
         run: |
-          JAR_PATH=$(find target -name "*.jar" | head -n 1)
-          echo "JAR original: $JAR_PATH"
-          cp "$JAR_PATH" simple-forge.jar
+          cp "${{ steps.findjar.outputs.jar_path }}" simple-forge.jar
 
-      - name: Install Databricks CLI
-        run: pip install databricks-cli --upgrade
+      - name: Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
 
-      - name: Configure Databricks CLI
+      - name: Upload JAR to S3
         run: |
-          echo "[DEFAULT]" > ~/.databrickscfg
-          echo "host = ${{ secrets.DATABRICKS_HOST }}" >> ~/.databrickscfg
-          echo "token = ${{ secrets.DATABRICKS_TOKEN }}" >> ~/.databrickscfg
-
-      - name: Upload JAR to Databricks Workspace Files
-        run: |
-          databricks fs cp simple-forge.jar dbfs:/Workspace/Users/oliveira-fernando1@hotmail.com/simple-forge.jar --overwrite
-
-      - name: Clean previous .databrickscfg directory if exists
-        run: |
-          if [ -d ~/.databrickscfg ]; then
-            rm -rf ~/.databrickscfg
-          fi
-
+          aws s3 cp simple-forge.jar s3://${{ env.S3_BUCKET }}/${{ env.S3_KEY_PREFIX }}simple-forge.jar --acl bucket-owner-full-control
