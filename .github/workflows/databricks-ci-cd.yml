@@ -28,13 +28,18 @@ jobs:
           curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
       - name: Validar Databricks Bundle
+        working-directory: ./data_forge_asset
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          export DATABRICKS_HOST=${{ secrets.DATABRICKS_HOST }}
-          export DATABRICKS_TOKEN=${{ secrets.DATABRICKS_TOKEN }}
           databricks bundle validate --target prod --profile prod
 
       - name: Deploy Databricks Bundle
+        working-directory: ./data_forge_asset
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          export DATABRICKS_HOST=${{ secrets.DATABRICKS_HOST }}
-          export DATABRICKS_TOKEN=${{ secrets.DATABRICKS_TOKEN }}
           databricks bundle deploy --target prod --profile prod
+
