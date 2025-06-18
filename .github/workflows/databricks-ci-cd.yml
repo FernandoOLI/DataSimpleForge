@@ -27,19 +27,26 @@ jobs:
         run: |
           curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
-      - name: Validar Databricks Bundle
-        working-directory: ./data_forge_asset
+      - name: Configurar Databricks CLI Profile
+        run: |
+          echo "[prod]" > ~/.databrickscfg
+          echo "host = ${{ secrets.DATABRICKS_HOST }}" >> ~/.databrickscfg
+          echo "token = ${{ secrets.DATABRICKS_TOKEN }}" >> ~/.databrickscfg
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+      - name: Validar Databricks Bundle
+        working-directory: ./data_forge_asset
         run: |
           databricks bundle validate --target prod --profile prod
 
       - name: Deploy Databricks Bundle
         working-directory: ./data_forge_asset
-        env:
-          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
           databricks bundle deploy --target prod --profile prod
+
+      - name: Clean file
+        run: |
+          rm -f ~/.databrickscfg
 
