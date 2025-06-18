@@ -18,7 +18,7 @@ resources:
         - job_cluster_key: job_cluster
           new_cluster:
             spark_version: 15.4.x-scala2.12
-            node_type_id: Standard_DS3_v2
+            node_type_id: m5d.large
             data_security_mode: SINGLE_USER
             num_workers: 1
 
@@ -28,4 +28,4 @@ resources:
           spark_jar_task:
             main_class_name: src.main.scala.Main
           libraries:
-              - jar: dbfs:/FileStore/jars/simple-forge.jar
+              - jar: s3://personal-project-fernando-oliveira-pereira/jars/simple-forge.jar
