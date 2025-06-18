@@ -28,6 +28,7 @@ jobs:
           curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
       - name: Configurar Databricks CLI Profile
+        working-directory: ./data_forge_asset
         run: |
           echo "[prod]" > ~/.databrickscfg
           echo "host = ${{ secrets.DATABRICKS_HOST }}" >> ~/.databrickscfg
