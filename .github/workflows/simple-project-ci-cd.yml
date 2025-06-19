@@ -3,7 +3,7 @@ name: CI/CD Databricks Scala Job
 on:
   push:
     paths:
-      - 'simple-project/**'
+      - 'src/**'
       - '.github/workflows/simple-project-ci-cd.yml'
     branches: [main]
 
