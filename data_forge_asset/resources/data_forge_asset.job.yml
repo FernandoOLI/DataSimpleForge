@@ -17,15 +17,15 @@ resources:
       job_clusters:
         - job_cluster_key: job_cluster
           aws_attributes:
-            instance_profile_arn: arn:aws:iam::905418007666:role/databricks-madkcuwjdtzigmmeftefft-cloud-storage-role
-            first_on_demand: 1
-            availability: SPOT_WITH_FALLBACK
-            zone_id: auto
           new_cluster:
             spark_version: 15.4.x-scala2.12
             node_type_id: m5d.large
             data_security_mode: SINGLE_USER
             num_workers: 1
+            instance_profile_arn: arn:aws:iam::905418007666:role/databricks-madkcuwjdtzigmmeftefft-cloud-storage-role
+            first_on_demand: 1
+            availability: SPOT_WITH_FALLBACK
+            zone_id: auto
 
       tasks:
         - task_key: simple_jar
