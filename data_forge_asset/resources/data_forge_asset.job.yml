@@ -32,6 +32,6 @@ resources:
         - task_key: simple_jar
           job_cluster_key: job_cluster
           spark_jar_task:
-            main_class_name: src.main.scala.Main
+            main_class_name: Main
           libraries:
               - jar: s3://personal-project-fernando-oliveira-pereira/jars/simple-forge.jar
