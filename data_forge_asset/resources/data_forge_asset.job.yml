@@ -18,7 +18,7 @@ resources:
         - job_cluster_key: job_cluster
           new_cluster:
             spark_version: 15.4.x-scala2.12
-            node_type_id: m5d.large
+            node_type_id: m5d.xlarge
             data_security_mode: SINGLE_USER
             num_workers: 1
 #           policy_id: asjdkajdkajdk

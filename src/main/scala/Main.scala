@@ -34,7 +34,6 @@ object Main {
 
     println(s"Dados gravados com sucesso no Delta: $outputPath")
 
-    spark.stop()
   }
 
   def createSparkSession(): SparkSession = {
