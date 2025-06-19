@@ -23,7 +23,7 @@ resources:
             num_workers: 1
 #           policy_id: asjdkajdkajdk
             aws_attributes:
-              instance_profile_arn: arn:aws:iam::905418007666:role/databricks-madkcuwjdtzigmmeftefft-cloud-storage-role
+              instance_profile_arn: arn:aws:iam::905418007666:instance-profile/databricks-s3-access-profile
               first_on_demand: 1
               availability: SPOT_WITH_FALLBACK
               zone_id: auto
