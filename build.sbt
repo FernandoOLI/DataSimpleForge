@@ -17,6 +17,8 @@ lazy val root = (project in file("."))
       "org.apache.spark" %% "spark-sql" % "3.5.0",
       "org.apache.spark" %% "spark-sql-kafka-0-10" % "3.5.0",
       "io.delta" %% "delta-spark" % "3.2.0",
+      "org.apache.httpcomponents.client5" % "httpclient5" % "5.1.3",
+      "com.fasterxml.jackson.core" % "jackson-databind" % "2.13.3",
       "org.scalatest" %% "scalatest" % "3.2.15" % Test,
       "org.scalatestplus" %% "mockito-4-6" % "3.2.15.0" % Test,
       "org.apache.spark" %% "spark-sql" % "3.4.0" % Test classifier "tests",
