@@ -23,9 +23,6 @@ object Main {
     val df =  spark.read.json(jsonRDD).withColumn("year", lit(year))
       .withColumn("month", lit(month))
       .withColumn("day", lit(day))
-    println("Mostrando os campos principais do JSON:")
-    df.printSchema()
-    df.show(false)
 
     val outputPath = "s3://personal-project-fernando-oliveira-pereira/data/"
 
