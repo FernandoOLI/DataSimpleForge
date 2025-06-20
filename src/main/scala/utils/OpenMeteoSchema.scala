@@ -2,7 +2,7 @@ package utils
 
 import org.apache.spark.sql.types._
 
-object Schema {
+object OpenMeteoSchema {
   val openMeteoSchema: StructType = StructType(
     Seq(
       StructField("elevation", DoubleType, nullable = true),

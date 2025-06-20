@@ -1,6 +1,5 @@
 import config.{JobConfig, PathConfig}
 import ingestion.OpenMeteoApiReader
-import io.netty.handler.codec.ProtocolDetectionResult.invalid
 import org.apache.spark.sql.SparkSession
 import quality.{IngestionMetrics, RangeValidator, SchemaValidator}
 import utils.{JobArgumentParser, Spark}

@@ -3,13 +3,13 @@ package quality
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 import org.slf4j.LoggerFactory
-import utils.Schema
+import utils.OpenMeteoSchema
 
 object SchemaValidator {
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  private val expectedSchema: StructType = Schema.openMeteoSchema
+  private val expectedSchema: StructType = OpenMeteoSchema.openMeteoSchema
 
   def validate(df: DataFrame): Boolean = {
     logger.info("Starting schema validation...")
