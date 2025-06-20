@@ -7,6 +7,7 @@ object PartitionTransformer {
   private val logger = LoggerFactory.getLogger(getClass)
   def addDatePartitions(df: DataFrame, executionDate: String): DataFrame = {
     logger.info(s"Adding partition columns based on executionDate: $executionDate")
+
     val date = java.time.LocalDate.parse(executionDate)
 
     df.withColumn("year", F.lit(date.getYear))
