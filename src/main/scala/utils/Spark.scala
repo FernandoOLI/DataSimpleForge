@@ -4,7 +4,7 @@ import org.apache.spark.sql.SparkSession
 
 object Spark {
   def createSparkSession(env: String): SparkSession = {
-    val builderSpark = SparkSession
+    lazy val builderSpark = SparkSession
       .builder()
       .appName("OpenMeteo API to Delta")
       .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")

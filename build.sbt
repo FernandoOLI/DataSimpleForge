@@ -20,6 +20,7 @@ lazy val root = (project in file("."))
       "org.apache.httpcomponents.client5" % "httpclient5" % "5.1.3",
       "com.fasterxml.jackson.core" % "jackson-databind" % "2.13.3",
       "com.github.scopt" %% "scopt" % "4.1.0",
+      "org.slf4j" % "slf4j-api" % "1.7.36",
       "org.scalatest" %% "scalatest" % "3.2.15" % Test,
       "org.scalatestplus" %% "mockito-4-6" % "3.2.15.0" % Test,
       "org.apache.spark" %% "spark-sql" % "3.4.0" % Test classifier "tests",

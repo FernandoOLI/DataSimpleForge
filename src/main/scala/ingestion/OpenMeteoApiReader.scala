@@ -4,11 +4,14 @@ import org.apache.hc.client5.http.classic.methods.HttpGet
 import org.apache.hc.client5.http.impl.classic.HttpClients
 import org.apache.hc.core5.http.io.entity.EntityUtils
 import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.slf4j.LoggerFactory
 import transformation.PartitionTransformer
 
 import java.time.LocalDate
 
 object OpenMeteoApiReader {
+  private val logger = LoggerFactory.getLogger(getClass)
+
   def read(apiUrl: String)(implicit spark: SparkSession): DataFrame = {
     val jsonResponse = fetchApiData(apiUrl)
 
@@ -22,6 +25,7 @@ object OpenMeteoApiReader {
   }
 
   private def fetchApiData(url: String): String = {
+    logger.info(s"Get data from URL: $url")
     val client = HttpClients.createDefault()
     val get = new HttpGet(url)
     val response = client.execute(get)
