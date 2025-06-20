@@ -33,5 +33,12 @@ resources:
           job_cluster_key: job_cluster
           spark_jar_task:
             main_class_name: Main
+            parameters:
+              - "--apiUrl"
+              - "https://api.open-meteo.com/v1/forecast?latitude=-23.55&longitude=-46.63&hourly=temperature_2m"
+              - "--outputPath"
+              - "s3://personal-project-fernando-oliveira-pereira/data"
+              - "--env"
+              - "prod"
           libraries:
               - jar: s3://personal-project-fernando-oliveira-pereira/jars/simple-forge.jar
