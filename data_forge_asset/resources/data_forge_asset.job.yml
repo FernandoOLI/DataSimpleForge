@@ -20,8 +20,9 @@ resources:
             spark_version: 15.4.x-scala2.12
             node_type_id: m5d.xlarge
             data_security_mode: SINGLE_USER
-            num_workers: 1
-#           policy_id: asjdkajdkajdk
+            autoscale:
+              min_workers: 1
+              max_workers: 2
             aws_attributes:
               instance_profile_arn: arn:aws:iam::905418007666:instance-profile/databricks-s3-access-profile
               first_on_demand: 1
