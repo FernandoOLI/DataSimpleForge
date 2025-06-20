@@ -1,4 +1,4 @@
-import config.JobConfig
+import config.{JobConfig, PathConfig}
 import ingestion.OpenMeteoApiReader
 import org.apache.spark.sql.SparkSession
 import quality.{RangeValidator, SchemaValidator}
@@ -20,11 +20,21 @@ object Main {
 
   private def run(config: JobConfig): Unit = {
     implicit val spark: SparkSession = Spark.createSparkSession(config.env)
-
+    val paths = PathConfig.createPaths(config.path)
     val df = OpenMeteoApiReader.read(config.apiUrl)
     if (SchemaValidator.validate(df)) {
-      val validatedDf = RangeValidator.validateNumericRanges(df)
-      DeltaLakeWriter.write(validatedDf, config.outputPath, Seq("year", "month", "day"))
+      val (validatedDf, invalidDF) = RangeValidator.validateNumericRanges(df)
+      DeltaLakeWriter.write(
+        validatedDf,
+        paths.output,
+        Seq("year", "month", "day")
+      )
+      DeltaLakeWriter.write(
+        invalidDF,
+        paths.badData,
+        Seq("year", "month", "day")
+      )
+
     } else {
       logger.error("Data Quality validation failed!")
     }

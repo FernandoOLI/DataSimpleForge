@@ -16,7 +16,7 @@ object JobArgumentParser {
         .text("API URL to fetch data"),
       opt[String]("outputPath")
         .required()
-        .action((x, c) => c.copy(outputPath = x))
+        .action((x, c) => c.copy(path = x))
         .text("S3 path to save Delta output"),
       opt[String]("env")
         .optional()

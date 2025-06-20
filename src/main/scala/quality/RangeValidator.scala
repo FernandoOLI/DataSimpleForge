@@ -8,7 +8,7 @@ object RangeValidator {
 
   def validateNumericRanges(
       df: DataFrame
-  )(implicit spark: SparkSession): DataFrame = {
+  )(implicit spark: SparkSession): (DataFrame, DataFrame) = {
     import spark.implicits._
 
     val invalidLatitude =
@@ -23,6 +23,10 @@ object RangeValidator {
       .filter(col("latitude").between(-90, 90))
       .filter(col("longitude").between(-180, 180))
 
-    cleanedDf
+    val invalid = df
+      .filter(col("latitude").lt(-90) || col("latitude").gt(90))
+      .union(df.filter(col("longitude").lt(-180) || col("longitude").gt(180)))
+
+    (cleanedDf, invalid)
   }
 }
