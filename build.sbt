@@ -37,3 +37,8 @@ assemblyMergeStrategy in assembly := {
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
   case x => MergeStrategy.first
 }
+Test / javaOptions ++= Seq(
+  "--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED"
+)
+
+Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat
