@@ -1,3 +1,5 @@
+package unit
+
 
 import config.PathConfig
 import org.scalatest.funsuite.AnyFunSuite

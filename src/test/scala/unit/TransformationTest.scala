@@ -1,6 +1,7 @@
-import org.scalatest.funsuite.AnyFunSuite
+package unit
+
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions._
+import org.scalatest.funsuite.AnyFunSuite
 import transformation.PartitionTransformer
 import utils.Spark
 

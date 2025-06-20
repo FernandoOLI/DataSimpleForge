@@ -1,7 +1,8 @@
-import org.scalatest.funsuite.AnyFunSuite
-import org.apache.spark.sql.SparkSession
+package unit
+
+import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.types._
-import org.apache.spark.sql.Row
+import org.scalatest.funsuite.AnyFunSuite
 import quality.SchemaValidator
 import utils.Spark
 

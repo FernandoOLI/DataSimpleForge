@@ -4,13 +4,50 @@ on:
   push:
     paths:
       - 'src/**'
-      - '.github/workflows/simple-project-ci-cd.yml'
+      - 'test/**'
+      - '.github/workflows/**'
     branches: [main]
 
 jobs:
-  build-test-upload:
-    name: Build, Test, and Upload JAR to S3
+  unit-tests:
+    name: Unit Tests
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache SBT dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.ivy2/cache
+            ~/.sbt
+          key: sbt-${{ runner.os }}-${{ hashFiles('**/build.sbt') }}
+          restore-keys: |
+            sbt-${{ runner.os }}-
+
+      - name: Install SBT
+        run: |
+          echo "Installing SBT..."
+          curl -L -o sbt.deb https://repo.scala-sbt.org/scalasbt/debian/sbt-1.9.7.deb
+          sudo dpkg -i sbt.deb
+          sudo apt-get update
+          sudo apt-get install -y sbt
+
+      - name: Run Unit Tests
+        run: sbt test
+
+  build-and-upload:
+    name: Build JAR and Upload to S3
+    runs-on: ubuntu-latest
+    needs: unit-tests
 
     env:
       AWS_REGION: us-east-2
@@ -50,13 +87,9 @@ jobs:
         run: |
           RAW_VERSION=$(sbt 'show version' | grep '\[info\]' | tail -1 | awk '{print $2}')
           CLEAN_VERSION=$(echo "$RAW_VERSION" | sed 's/-SNAPSHOT//')
-          echo "Versão extraída: $CLEAN_VERSION"
           echo "version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Run tests
-        run: sbt test
-
-      - name: Package JAR with overridden version
+      - name: Build JAR with overridden version
         run: sbt -Dversion.override=${{ steps.get_version.outputs.version }} clean assembly
 
       - name: Find built JAR

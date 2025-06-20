@@ -1,0 +1,17 @@
+{
+  "latitude": -23.5,
+  "longitude": -46.6,
+  "generationtime_ms": 0.2,
+  "utc_offset_seconds": -10800,
+  "timezone": "America/Sao_Paulo",
+  "timezone_abbreviation": "BRT",
+  "elevation": 760.0,
+  "hourly_units": {
+    "time": "iso8601",
+    "temperature_2m": "°C"
+  },
+  "hourly": {
+    "time": ["2025-06-21T00:00", "2025-06-21T01:00"],
+    "temperature_2m": [15.2, 14.9]
+  }
+}

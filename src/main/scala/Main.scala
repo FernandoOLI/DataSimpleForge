@@ -1,5 +1,6 @@
 import config.{JobConfig, PathConfig}
 import ingestion.OpenMeteoApiReader
+import ingestion.http.RealHttpClient
 import org.apache.spark.sql.SparkSession
 import quality.{IngestionMetrics, RangeValidator, SchemaValidator}
 import utils.{JobArgumentParser, Spark}
@@ -24,7 +25,8 @@ object Main {
     implicit val spark: SparkSession = Spark.createSparkSession(config.env)
     val paths = PathConfig.createPaths(config.path)
     val today = LocalDate.now().toString
-    val df = OpenMeteoApiReader.read(config.apiUrl, today)
+    val df =
+      new OpenMeteoApiReader(new RealHttpClient()).read(config.apiUrl, today)
     if (SchemaValidator.validate(df)) {
       val (validatedDf, invalidDF) = RangeValidator.validateNumericRanges(df)
       DeltaLakeWriter.write(
