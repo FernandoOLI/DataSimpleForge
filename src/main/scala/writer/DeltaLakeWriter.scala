@@ -4,10 +4,16 @@ import org.apache.spark.sql.DataFrame
 
 object DeltaLakeWriter {
   def write(df: DataFrame, path: String, partitionCols: Seq[String]): Unit = {
-    df.write
+    val writer = df.write
       .format("delta")
       .mode("overwrite")
-      .partitionBy(partitionCols: _*)
-      .save(path)
+
+    val finalWriter = if (partitionCols.nonEmpty) {
+      writer.partitionBy(partitionCols: _*)
+    } else {
+      writer
+    }
+
+    finalWriter.save(path)
   }
 }

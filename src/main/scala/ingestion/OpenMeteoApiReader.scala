@@ -12,7 +12,9 @@ import java.time.LocalDate
 object OpenMeteoApiReader {
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def read(apiUrl: String)(implicit spark: SparkSession): DataFrame = {
+  def read(apiUrl: String, executionDate: String = LocalDate.now().toString)(
+      implicit spark: SparkSession
+  ): DataFrame = {
     val jsonResponse = fetchApiData(apiUrl)
 
     val jsonRDD = spark.sparkContext.parallelize(Seq(jsonResponse))
@@ -20,7 +22,7 @@ object OpenMeteoApiReader {
     PartitionTransformer.addDatePartitions(
       spark.read
         .json(jsonRDD),
-      LocalDate.now().toString
+      executionDate
     )
   }
 
