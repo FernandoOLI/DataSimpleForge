@@ -26,14 +26,7 @@ The project is divided into three main components:
 * **Data Storage:**
   Writes data into Delta Lake tables, ensuring schema enforcement and versioning.
 
-> *(Optional: Add a system diagram here, e.g., `./docs/system-architecture.png`)*
-
-### High-Level Data Flow:
-
-1. API →
-2. Spark Transformations →
-3. Delta Lake Storage →
-4. CI/CD Deploy to Databricks
+![drawio_image](.doc/DiagramSImpleProject.drawio.png)
 
 ---
 
