@@ -1,137 +1,191 @@
-# DataSimpleForge - Data Ingestion Framework for Delta Lake on Databricks
-
-Personal data engineering project by **Fernando Oliveira Pereira**, focused on ingesting public API data into Delta Lake using Apache Spark (Scala), with CI/CD deployment to Databricks.
 
 ---
 
-## ✅ Project Status (As of June 19, 2025)
-
-| Topic                                  | Status                        |
-| -------------------------------------- | ----------------------------- |
-| Project structure organized            | ✅                             |
-| Date parameterization                  | ✅                             |
-| Professional logging                   | ✅                             |
-| Data Quality Checks                    | ✅ (Basic Schema Validation)   |
-| Unit tests                             | ❌                             |
-| Integration tests                      | ❌                             |
-| Data Observability (metrics)           | ❌                             |
-| CI/CD setup with GitHub Actions        | ✅ (build + upload + deploy)   |
-| Deployment via Databricks Asset Bundle | ✅                             |
-| Technical documentation                | ❌                             |
+# DataSimpleForge — Technical Documentation
 
 ---
 
-## 📌 Purpose
+## 1. Introduction / Overview
 
-Ingest data from public APIs (starting with Open-Meteo) and store it in **Delta Lake**, partitioned by **year**, **month**, and **day**, with automated deployment using GitHub Actions and Databricks Asset Bundles.
+**DataSimpleForge** is a Scala-based data engineering project designed to ingest and process data from public APIs, storing the output in a **Delta Lake**. The pipeline is built for both local and Databricks cloud execution, with CI/CD automation handled via **GitHub Actions**.
+
+The main goal is to provide a robust and scalable ingestion framework, leveraging modern technologies like **Apache Spark**, **Delta Lake**, and **CI/CD pipelines** to automate the full data flow.
 
 ---
 
-## 📂 Project Structure
+## 2. System Architecture
+
+The project is divided into three main components:
+
+* **Data Collection:**
+  Reads data from public APIs with support for date and parameter customization.
+
+* **Data Processing:**
+  Transforms and validates the data using Spark.
+
+* **Data Storage:**
+  Writes data into Delta Lake tables, ensuring schema enforcement and versioning.
+
+> *(Optional: Add a system diagram here, e.g., `./docs/system-architecture.png`)*
+
+### High-Level Data Flow:
+
+1. API →
+2. Spark Transformations →
+3. Delta Lake Storage →
+4. CI/CD Deploy to Databricks
+
+---
+
+## 3. Setup and Installation
+
+### Prerequisites
+
+* Java 11+
+* Scala 2.12+
+* SBT (Scala Build Tool)
+* Databricks CLI configured
+* A Databricks workspace (for cloud execution)
+
+### Installation Steps
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/FernandoOLI/DataSimpleForge.git
+   cd DataSimpleForge
+   ```
+
+2. Configure environment variables and runtime parameters inside the `application.conf` or by passing them as command-line arguments (e.g., date ranges, API URLs).
+
+3. Build the project:
+
+   ```bash
+   sbt clean compile
+   ```
+
+---
+
+## 4. Pipeline Execution
+
+### Local Execution
+
+You can run the main ingestion job locally for testing:
+
+```bash
+sbt run
+```
+
+Make sure to pass the required parameters (e.g., ingestion period, API URL).
+
+### Databricks Execution
+
+* Deploy the generated JAR via GitHub Actions or manually through the Databricks UI.
+* Trigger execution via Databricks Jobs or Notebooks linked to the deployed JAR.
+  ![databricks_image](.doc/images/databricks_job.png)
+
+### AWS
+After execution, three delta tables will be generated in the AWS folder:
+
+output -> with the data processed by the API.
+
+bad_data-> Data that was removed from the output, as it had values outside the latitude and longitude.
+
+metrics-> data with execution date, total data, total valid data, total invalid data, and url.
+
+![aws_image](.doc/images/aws.png)
+---
+
+## 5. CI/CD Pipeline
+
+The project includes a fully automated **GitHub Actions pipeline** for:
+
+* Building the Scala project with SBT
+* Running unit and integration tests
+* Uploading JAR files and Databricks Asset Bundles
+* Deploying jobs and configurations to **Databricks**
+
+This ensures reliable and consistent deployments with automated builds and tests.
+![github_image](.doc/images/github_action.png)
+### Required Environment Variables (GitHub Actions Secrets)
+
+For the CI/CD pipeline to work, you must configure the following secrets in your GitHub repository:
+
+| Secret                  | Description                                                             | How to create                                                                                                                                                    |
+| ----------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AWS_ACCESS_KEY_ID`     | Your AWS access key (if you’re storing build artifacts like JARs in S3) | Go to AWS Console → IAM → Create a new User → Enable **Programmatic Access** → Attach necessary policies (e.g., AmazonS3FullAccess) → Copy the **Access Key ID** |
+| `AWS_SECRET_ACCESS_KEY` | Your AWS secret key                                                     | During the same IAM user creation process → Copy the **Secret Access Key**                                                                                       |
+| `DATABRICKS_HOST`       | The URL of your Databricks workspace                                    | In Databricks UI → Click on your profile icon → **User Settings** → Copy your workspace URL (e.g., `https://<databricks-instance>.cloud.databricks.com`)         |
+| `DATABRICKS_TOKEN`      | Databricks Personal Access Token (PAT)                                  | In Databricks UI → **User Settings** → **Generate New Token** → Copy and store it securely                                                                       |
+
+---
+
+### How to Configure Secrets in GitHub
+
+1. Go to your repository on GitHub.
+2. Click on **Settings** → **Secrets and Variables** → **Actions** → **New repository secret**.
+3. Create each secret (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `DATABRICKS_HOST`, `DATABRICKS_TOKEN`).
+4. Ensure all secrets are available before running the pipeline.
+
+---
+
+### CI/CD Workflow File Location
+
+The CI/CD workflow file is located at:
 
 ```
-DataSimpleForge/
-├── src/main/scala/br/dataforge/
-│     ├── reader/
-│     ├── transformation/
-│     ├── writer/
-│     ├── quality/
-│     ├── config/
-│     └── utils/
-├── test/
-├── .github/workflows/
-├── data_forge_asset/         # Databricks Asset Bundle
-├── docs/                     # Future technical documentation
-├── README.md
-└── build.sbt
+.github/workflows/databricks-bundle.yml
 ```
----
+
+> This YAML file defines all the steps for build, test, upload, and deployment.
 
 ---
 
-## ✅ Improvement Checklist
+## 6. Testing
 
-### 1) Project Organization
+We use **ScalaTest** for unit and basic integration testing.
 
-- [x] Restructure Scala packages (`reader`, `transformation`, `writer`, `quality`, etc.)
-- [ ] Improve README with full build and deployment instructions
-- [ ] Add helper scripts (Makefile or `.sh`) for local dev and build
+To run tests locally:
 
-### 2) Runtime Parameterization
+```bash
+sbt test
+```
 
-- [x] Accept execution date as a parameter (`--date`)
-- [x] Accept API URL and output path as parameters
-- [x] Environment handling (Local vs Prod Spark Master)
+Test coverage includes:
 
-### 3) Professional Logging
+* Core transformation logic
+* Delta Lake read/write validation
+* API ingestion behavior
 
-- [x] SLF4J + Log4j setup
-- [x] Logs for:
-
-  - Job start
-  - API fetch success
-  - Data transformation
-  - Schema validation
-  - Data write
-  - Errors and exceptions
-
-### 4) Data Quality Checks
-
-- [x] Validate API JSON structure against fixed **Spark StructType**
-- [x] Check for empty DataFrames
-- [x] Validate non-null required columns
-- [ ] Validate ranges for numeric fields (latitude, longitude, temperature)
-- [ ] Persist bad records (optional)
-
-### 5) Unit Tests
-
-- [ ] Test JSON parsing
-- [ ] Test transformation logic
-- [ ] Test partition column generation
-- [ ] Test schema validator
-
-### 6) Integration Tests
-
-- [ ] Test Delta write
-- [ ] Test read-after-write consistency
-- [ ] Test correct partition creation in S3
-
-### 7) Data Observability (Ingestion Metrics)
-
-- [ ] Generate metrics JSON per run (rows written, errors, execution time)
-- [ ] Save metrics to S3 (`/data_quality_metrics/`)
-- [ ] Log metrics summary at end of job
-
-### 8) CI/CD Pipeline (GitHub Actions)
-
-- [x] JAR build
-- [x] JAR upload to S3
-- [x] Databricks Asset Bundle deployment
-- [ ] Add post-deploy validation step
-- [ ] (Optional) Trigger a Databricks job as a smoke test post-deploy
-
-### 9) Technical Documentation
-
-- [ ] Create `/docs/README_openmeteo.md` about Open-Meteo API fields and params
-- [ ] Document Delta table schema and partitioning strategy
-- [ ] Document AWS IAM setup and required roles/policies
-- [ ] Document how to run job manually (local + Databricks)
-
-### 10) Future Enhancements
-
-- [ ] Multi-API ingestion support
-- [ ] Airflow orchestration
-- [ ] Streaming ingestion with Spark Structured Streaming
-- [ ] External catalog registration (Databricks metastore)
-- [ ] Monitoring integration (Datadog, CloudWatch, etc)
+It’s recommended to run tests before every deployment.
 
 ---
 
-## 💡 Tech Stack
+## 7. Observability and Logging
 
-- Apache Spark (Scala)
-- Delta Lake
-- Databricks Asset Bundles
-- GitHub Actions (CI/CD)
-- AWS S3
-- Open-Meteo API (Initial Data Source)
+The project uses **log4j** for logging. Logs are printed to the console during local execution and can be viewed in the Databricks job run history when executed in the cloud.
+
+### Log configuration:
+
+You can adjust the logging level in the `log4j.properties` file.
+
+---
+
+## 8. Best Practices and Recommendations
+
+* Keep dependencies updated and tested regularly.
+* Always validate input parameters to avoid ingestion failures.
+* Consider implementing monitoring or alerting on Databricks job failures.
+* Document any major code or pipeline changes to help future maintainers.
+
+---
+
+## 9. References
+
+* [Apache Spark Documentation](https://spark.apache.org/docs/latest/)
+* [Delta Lake Documentation](https://docs.delta.io/latest/index.html)
+* [Databricks Documentation](https://docs.databricks.com/)
+* [ScalaTest](https://www.scalatest.org/)
+* Maintainer: Fernando Oliveira — [LinkedIn](https://www.linkedin.com/in/fernando-oliveira-b81032b4/)
+
+---
